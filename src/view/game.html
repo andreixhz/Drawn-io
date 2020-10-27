@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel = "stylesheet" type = "text/css" href="/main.css" />
+  </head>
+</head>
+<body>
+
+    <div id="lobby" class="d-flex lobby justify-content-center align-items-center">
+        <div class="bg1 lb-profile"></div>
+        <div class="bg1 lb-lobby">
+            <div class="input_box d-flex flex-column bd-highlight mb-3">
+                <div class="title_input">
+                    <p class="name_input">Codigo da sala</p>
+                    <p class="error_user" style="display:none">Error</p>
+                </div>
+                <input id="room_code" type="text" placeholder="ex: 312321" type="text"/>
+                <div id="connect_to_room" class="btn_form d-flex justify-content-center align-items-center" style="height:40px; margin-top: 20px;">
+                    Entrar
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="game" class="d-none lobby justify-content-center align-items-center flex-column bd-highlight mb-3">
+        
+        <div class="Log_game justify-content-between d-flex">
+            <div class="log_ bg1 justify-content-center align-items-center d-flex ">
+                <h1>Vez de:</h1>
+                <p id="user_time"></p>
+            </div>
+            <div class="log_ bg1 justify-content-center align-items-center d-flex ">
+                <h1>Desenhar:</h1>
+                <p id="des_id"></p>
+            </div>
+            <div class="log_ bg1 justify-content-center align-items-center d-flex ">
+                <h1>Tema</h1>
+                <p>Animal</p>
+            </div>
+        </div>
+
+        <div id="content_game" class="game_content bg1">
+            <div class="UserPanel d-flex align-items-start flex-column bd-highlight mb-3">
+                <div class="panels p-2 bd-highlight" style="height: 360px;">
+                    <div id="u_in_match" class="user_content d-flex justify-content-start align-items-center flex-column bd-highlight mb-3">
+                    </div>
+                </div>
+                <div class="panels mt-auto p-2 bd-highlight" style="height: 290px;">
+                    <div class="chat d-flex justify-content-start align-items-center flex-column bd-highlight mb-3">
+                        <div id="content_msg" class="content p-2 bd-highlight">
+
+                        </div>
+                        <div class="snd_msg mt-auto p-2 bd-highlight">
+                            <div class="input_box d-flex flex-column bd-highlight mb-3" style="width:280px;">
+                                <div class="title_input">
+                                    <p class="name_input">Chat</p>
+                                    <p class="error_user" style="display:none">Error</p>
+                                </div>
+                                <input id="chat_box" type="text" placeholder="ex: 312321" style="width:200px;" type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="c_panels">
+                <canvas height="670px" width="880px" id="canvasUpdate" class="centerPanel"> </canvas>
+                <div class="progress" style="width: 800px; margin-left: auto; margin-right: auto; position: relative; top: -38px;">
+                    <div id="pro_bar" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="60" style="width:100%;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="fiel_enpty">
+            <input id="t_t" type="text"/>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+    var GameCanvas = null;    
+
+    var socket = io();
+
+    let RoomCode = null;
+
+    let Room = null;
+
+    let ob = null;
+
+    let User = {
+        
+    }
+    //canvas
+    var isMouseDown=false;
+    var canvas = document.getElementById('canvasUpdate');
+    var ctx = canvas.getContext('2d');
+    var linesArray = [];
+    var currentSize = 5;
+    var currentColor = "rgb(200,20,100)";
+    var currentBg = "white";
+
+    canvas.addEventListener('mousedown', function() {mousedown(canvas, event);});
+    canvas.addEventListener('mousemove',function() {mousemove(canvas, event);});
+    canvas.addEventListener('mouseup',mouseup);
+
+    
+    function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
+        };
+    }
+    function mousedown(canvas, evt) {
+
+        if(Room.Users[Room.turnId]._id !== User._id)
+                return;
+
+        obj = {canvas, evt};
+        var mousePos = getMousePos(canvas, evt);
+        isMouseDown=true
+        var currentPosition = getMousePos(canvas, evt);  
+        store(currentPosition.x, currentPosition.y, currentSize, currentColor);
+    }
+    function mousemove(canvas, evt) {
+
+        if(Room.Users[Room.turnId]._id !== User._id)
+                return;
+
+        if(isMouseDown){
+            var currentPosition = getMousePos(canvas, evt);
+            store(currentPosition.x, currentPosition.y, currentSize, currentColor);
+        }
+    }
+    function store(x, y, s, c) {
+    var line = {
+        "x": x,
+        "y": y,
+        "size": s,
+        "color": c
+    }
+    socket.emit('add_pointer', {line, Room, UserId:User._id});
+    }
+    function mouseup() {
+    isMouseDown=false
+    store()
+    }
+    function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+    }      
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+    function GameStart(){
+
+        Room.turnId = 0;
+        socket.emit('startGameRoom', Room);
+        console.log('a');
+
+    }
+    function NextRound(){
+        Room.userP = 0;
+        socket.emit('game_turn_next_send', Room);
+    }
+
+    var display = document.getElementById('pro_bar');
+    var count = Number(60);
+    var id = null;
+    let ctt = Number(0);
+
+    function startCountdown(){
+        
+        if(!id) {
+            id = setInterval(function () {
+            count = count - 1;
+            display.style = "width: " + (count/60)*100 + "%";
+            console.log(count);
+            if(count === 0){
+                clearInterval(id);
+                id = null;
+                NextRound();
+            }
+            }, 1000);    
+        }
+
+    }
+
+    $(document).ready(() => {
+        
+        $("#error").text(" ");
+        $.ajax({
+            url: 'http://localhost:4000/att/auth',
+            type: 'post',
+            data: {  },
+            headers: {
+                authorization: 'Bearer ' + getCookie('token')
+            },
+            dataType: 'json',
+            success: function (data){
+                console.log(data);
+                console.log(getCookie('token'));
+                if(data.error) {
+                    window.location.href = "http://localhost:4000/";
+                }
+                User = data.User;
+            },
+            error: function (data){
+                console.log(data);   
+            }
+        });
+    })
+
+    let input = document.getElementById("chat_box");
+    input.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13 && input.focus) {
+            if(input.value.length > 40){
+                alert('kkk');
+                return
+            }
+            socket.emit('messegeSend', {User, RoomCode, msg:input.value});
+            input.value = '';
+        }
+    });
+    socket.on('broadcast',function(data) {
+
+        Room = data.Room;
+
+        ctx.lineWidth  = data.line.size;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = data.line.color;
+        ctx.lineTo(data.line.x, data.line.y)
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(data.line.x, data.line.y)
+
+
+    });
+    socket.on('connectToRoom', (data) => {
+        console.log(data);
+        let x = 0;
+        if(Room === null){
+            data.room.Users.forEach(element => {
+            console.log(element.username);
+            document.getElementById("u_in_match").innerHTML += 
+            `
+            <div class="user_c_box">
+                <div class="name_u">${element.username}</div>
+                <div class="u_points" id="#p_${element._id}">${element.point}</div>
+            </div>
+            `;
+            x++;
+        });
+        } else {
+            console.log(data);
+            document.getElementById("u_in_match").innerHTML += 
+            `
+            <div class="user_c_box">
+                <div class="name_u">${data.User.username}</div>
+                <div class="u_points" id="#p_${data.User._id}">${data.User.point}</div>
+            </div>
+            `;
+            x++;
+        }
+
+        Room = data.room;
+        if(Room.Users.length > 1 && Room.MasterUser === User._id)
+            GameStart();
+
+    });
+    socket.on('messege', data => {
+        const content = document.getElementById('content_msg');
+        var curScrollPos = content.scrollTop;
+        var oldScroll = content.scrollHeight - content.clientHeight;
+
+        content.innerHTML += 
+        `<div class="msc">
+            <div class="name_msg">${data.name}</div>
+            <div class="msg_msg">${data.msg}</div>
+        </div>`
+        var newScroll = content.scrollHeight - content.clientHeight;
+        content.scrollTop = curScrollPos + (newScroll - oldScroll);
+    })
+    socket.on('startGame', data =>{
+
+        Room = data;
+        ob = data.objective;
+        Room.userP = 0;
+        if(Room.Users[Room.turnId]._id === User._id)
+            $("#des_id").text(data.objective)
+        else{
+            $("#des_id").text("")
+        }
+        $('#user_time').text(Room.Users[Room.turnId].username);
+        startCountdown();
+
+    })
+    socket.on('game_turn_next', data => {
+        Room = data;
+        ob = data.objective;
+        $('#user_time').text(Room.Users[Room.turnId].username);
+
+        if(Room.Users[Room.turnId]._id === User._id)
+            $("#des_id").text(data.objective)
+        else{
+            $("#des_id").text("")
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctt == 0;
+        count = 60;
+        startCountdown();
+    });
+    socket.on('add_u_point', async data =>{
+        Room.userP++;
+        document.getElementById('#p_'+data.User._id).innerHTML = data.User.point;
+        if(Room.userP === Room.Users.length - 1){
+            NextRound();
+        }
+
+    });
+
+    let inputTentar = document.getElementById("t_t");
+    inputTentar.addEventListener("keyup", function(event){
+
+
+        if(Room.Users[Room.turnId]._id === User._id)
+            return;
+        if (event.keyCode === 13 && input.focus) {
+        
+            const t1 = ob.substring(0,(ob.length - 1));
+            let tte = inputTentar.value.toLowerCase() === t1.toLowerCase();
+
+            console.log('digitou : ' + inputTentar.value.toLowerCase());
+
+            if(tte){
+                User.point++;
+                socket.emit('u_add_point', {User, RoomCode});
+                console.log('a');
+            }
+            inputTentar.value = '';
+            
+        }
+    });
+
+
+    $("#connect_to_room").click(() => {
+        RoomCode = document.getElementById('room_code').value
+        socket.emit('join_room', ({RoomCode, User}));
+        User.point = 0;
+        console.log(RoomCode);
+        $("#lobby").addClass('d-none');
+        $("#lobby").removeClass('d-flex');
+        $("#game").removeClass('d-none');
+        $("#game").addClass("d-flex");
+    });
+
+</script>

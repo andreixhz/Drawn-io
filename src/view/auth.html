@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://use.typekit.net/xct3pyy.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel = "stylesheet" type = "text/css" href="/main.css" />
+    
+  </head>
+</head>
+<body>
+
+    <div id="auth" class="d-flex justify-content-center align-items-center auth flex-column bd-highlight mb-3">
+        <section class="box_auth  d-flex justify-content-center align-items-center">
+            <div class="Form_login d-flex justify-content-center align-items-center flex-column bd-highlight mb-3">
+                <div class="input_box d-flex flex-column bd-highlight mb-3">
+                    <div class="title_input">
+                        <p class="name_input">Nickname</p>
+                        <p id="error_u" class="error_user"></p>
+                    </div>
+                    <input id="login_user" placeholder="Nickname" type="text"/>
+                </div>
+
+                <div class="input_box d-flex flex-column bd-highlight mb-3">
+                    <div class="title_input">
+                        <p class="name_input">Password</p>
+                        <p id="error_p" class="error_user"></p>
+                    </div>
+                    <input id="password_l" type="password" placeholder="******" type="text"/>
+                </div>
+                <div id="btn_login" class="btn_form d-flex justify-content-center align-items-center">
+                    Entrar
+                </div>
+                <div id="register" class="btn_form d-flex justify-content-center align-items-center" style="height:40px; margin-top: 20px;">
+                    Criar conta
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="registerScreen" class="d-none justify-content-center align-items-center auth flex-column bd-highlight mb-3">
+        <section class="box_auth d-flex justify-content-center align-items-center">
+            <div class="Form_login d-flex justify-content-center align-items-center flex-column bd-highlight mb-3">
+                <div class="input_box d-flex flex-column bd-highlight mb-3">
+                    <div class="title_input">
+                        <p class="name_input">Nickname</p>
+                        <p id="error_user_rg" class="error_user"></p>
+                    </div>
+                    <input id="user_rg" placeholder="username" type="text"/>
+                </div>
+
+                <div class="input_box d-flex flex-column bd-highlight mb-3">
+                    <div class="title_input">
+                        <p class="name_input">Email</p>
+                        <p id="error_user_rg_email" class="error_user"></p>
+                    </div>
+                    <input id="email_rg_email" type="email" placeholder=emial@email.com type="text"/>
+                </div>
+
+                <div class="input_box d-flex flex-column bd-highlight mb-3">
+                    <div class="title_input">
+                        <p class="name_input">Senha</p>
+                        <p id="error_user_rg_password" class="error_user"></p>
+                    </div>
+                    <input id="user_rg_password" type="password" placeholder="****"/>
+                </div>
+
+                <div id="register_btn" class="btn_form d-flex justify-content-center align-items-center">
+                    Criar
+                </div>
+                <div id="login" class="btn_form d-flex justify-content-center align-items-center" style="height:40px; margin-top: 20px;">
+                    Entrar
+                </div>
+            </div>
+        </section>
+    </div>   
+</body>
+
+</html>
+<script>
+
+
+    $("#register").click(() => {
+        $("#auth").removeClass("d-flex");
+        $("#auth").addClass("d-none");
+        $("#registerScreen").removeClass("d-none");
+        $("#registerScreen").addClass("d-flex");
+    });
+
+    $("#login").click(() => {
+        $("#auth").addClass("d-flex");
+        $("#auth").removeClass("d-none");
+        $("#registerScreen").removeClass("d-flex");
+        $("#registerScreen").addClass("d-none");
+    });
+
+
+
+    function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+    }
+
+    $(document).ready(() => {
+        $("#error").text(" ");
+        $.ajax({
+        url: 'http://localhost:4000/att/auth',
+        type: 'post',
+        data: {  },
+        headers: {
+            authorization: 'Bearer ' + getCookie('token')
+        },
+        dataType: 'json',
+        success: function (data){
+            console.log(data)
+            if(data.error) {
+                return;
+            }
+            window.location.href = "http://localhost:4000/app";
+        },
+        error: function (data){
+            console.log(data);   
+        }
+
+        });
+    })
+
+    let usuarioExistente = false;
+    let passwordCorrect = true;
+    
+
+    $("#login_user").change(() => {
+        console.log(document.getElementById("login_user").value);
+        $("#error_u").text("");
+    });
+
+    $("#password_l").change(() => {
+        console.log(document.getElementById("login_user").value);
+        $("#error_p").text("");
+    });
+
+    $("#btn_login").click(() => {
+
+        if(document.getElementById("login_user").value.length === 0){
+            $("#error_u").text("insira um usuario");
+            return;
+        }
+
+        if(document.getElementById("password_l").value.length === 0){
+            $("#error_p").text("insira uma senha");
+            return;
+        }
+        $("#auth").hide();
+
+        $.ajax({
+            url: 'http://localhost:4000/auth/authenticate',
+            type: 'post',
+            data: { 
+                user: document.getElementById("login_user").value,
+                password: document.getElementById("password_l").value 
+            },
+            headers: {
+                
+            },
+            dataType: 'json',
+            success: function (data){
+                console.log(data)
+                if(data.log) {
+                    if(data.log === "User_not_found"){
+                        $("#error_u").text("usuario não encontrado");
+                    }
+                    $("#auth").show();
+                    return;
+                }                   
+                setCookie("token", data.token, 10);
+                window.location.href = "http://localhost:4000/app";
+
+            },
+            error: function (data){
+                console.log(data);   
+            }
+
+        });
+
+    })
+    $("#register_btn").click(() => {
+        if(document.getElementById("user_rg").value.length === 0){
+            $("#error_user_rg").text("insira um usuario");
+            return;
+        }
+
+        if(document.getElementById("email_rg_email").value.length === 0){
+            $("#error_user_rg_email").text("insira um email");
+            return;
+        }
+
+        if(document.getElementById("user_rg_password").value.length === 0){
+            $("#error_user_rg_password").text("insira uma senha");
+            return;
+        }
+
+        $.ajax({
+            url: 'http://localhost:4000/auth/register  ',
+            type: 'post',
+            data: { 
+                username: document.getElementById("user_rg").value,
+                password: document.getElementById("user_rg_password").value,
+                email: document.getElementById("email_rg_email").value 
+            },
+            headers: {
+                
+            },
+            dataType: 'json',
+            success: function (data){
+                console.log(data);
+                if(data.error) {
+                    $("#auth").show();
+                    return;
+                }
+                setCookie("token", data.token, 10);
+                window.location.href = "http://localhost:4000/app";
+            },
+            error: function (data){
+                console.log(data);   
+            }
+
+        });
+
+        })
+    $("#rgt_go").click(() => {
+        $("#auth").removeClass("d-flex justify-content-center align-items-center auth flex-column bd-highlight mb-3");
+        $("#auth").addClass("noDisplay");
+        $("#rg").addClass("d-flex justify-content-center align-items-center auth flex-column bd-highlight mb-3");
+    });
+    $("#rgt_go_login").click(()=>{
+        $("#rg  ").removeClass("d-flex justify-content-center align-items-center auth flex-column bd-highlight mb-3");
+        $("#rg").addClass("noDisplay");
+        $("#auth").addClass("d-flex justify-content-center align-items-center auth flex-column bd-highlight mb-3");
+    })
+    
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+
+</script>

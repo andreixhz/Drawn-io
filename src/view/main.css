@@ -1,0 +1,322 @@
+*{ margin: 0px; padding: 0px; }
+body{background: #1451a4;}
+html {
+    height: 100%;
+}
+
+*:focus {
+    outline: none;
+}
+
+@font-face {
+    font-family: "Script MT Bold";
+    src: url("/src/fonts/ScriptMTBold.ttf");
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 9px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #31b573;
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2a925e;
+}
+
+body {
+    height: 100%;
+    background-image: url('./src/background.jpg');
+    z-index: 1;
+}
+
+.bg1{
+    background: #1566c2;
+    box-shadow: 0px 9px #001c6f;;
+    border-radius: 15px;
+}
+
+.auth{
+    height: 100%;
+    transition-duration: 500ms;
+    
+}
+
+.box_auth{
+
+    width: 440px;
+    height: 100%;
+    background: #1566c2;
+
+}
+
+.Form_login{
+
+    width: 400px;
+    height: 80%;
+
+}
+
+.input_box{
+
+    width: 340px;
+    height: 60px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0px 9px #001c6f;
+
+}
+
+.name_input{
+    font-family: Script MT Bold;
+    padding-top: 10px;
+    padding-left: 15px;
+    float: left;
+
+}
+
+.error_user{
+    font-family: Script MT Bold;
+    font-weight: 400;
+    font-style: normal;
+    padding-top: 10px;
+    padding-right: 15px;
+    float: right;
+    color: red;
+}
+
+.input_box input {
+
+    border: none;
+    position: relative;
+    top: -20px;
+    left: 40px;
+    width: 260px;
+    outline: none;
+
+
+}
+
+.btn_form{
+
+    box-shadow: 0px 9px #001c6f;
+    border-radius: 15px;
+    background-color: #f09450;
+    height: 40px;
+    width: 170px;
+    font-family: myriad-pro,sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: white;
+}
+
+.btn_form:hover{
+    background:#cd7e44;
+    cursor: pointer;
+}
+
+/* lobby */
+
+.lobby{
+    height: 90%;
+}
+
+.lb-profile{
+    width: 250px;
+    height: 450px;
+    margin-right: 15px;
+}
+
+.lb-lobby{
+    width: 600px;
+    height: 450px;
+}
+
+/* game content */
+
+.game_content{
+
+    width: 1280px;
+    height: 720px;
+    padding-top: 25px;
+    padding-left: 25px;
+    padding-right: 25px;
+
+}
+
+.UserPanel{
+    float: left;
+    width: 320px;
+    height: 670px;
+
+}
+
+.panels{
+    background: #5e92f3;
+    box-shadow: 0px 9px #001c6f;
+    border-radius: 15px;
+    width: 320px;
+}
+
+.centerPanel{
+    width: 880px;
+    height: 670px;
+    background: #fff;
+    box-shadow: 0px 9px #001c6f;
+    border-radius: 15px;
+}
+
+.c_panels{
+    float: right;
+    width: 880px;
+    height: 670px;
+}
+
+.Log_game{
+
+    width: 1280px;
+    height: 60px;
+    margin-bottom: 20px;
+
+}
+
+.chat{
+    height: 100%;
+    width: 100%;
+}
+
+.content{
+    height: 200px;
+    width:290px;
+    overflow-y: auto;
+
+}
+
+
+.snd_msg{
+    z-index: 100;
+    height: 40px;
+    width:280px;
+    margin-bottom: 40px;
+}
+
+.snd_msg input{
+    border: none;
+    height: 40px;
+    width:280px;
+    border-radius: 15px;
+    padding-left: 10px;
+}
+
+.name_msg{
+    background: #31b573;
+    color: #fff;
+    width: fit-content;
+    padding: 5px;
+    font-family: myriad-pro,sans-serif;
+    font-weight: 600;
+    border-radius: 10px;
+    z-index: 10;
+    position: relative;
+}
+
+.msg_msg{
+    word-wrap: break-word;
+    background: #fff;
+    width: fit-content;
+    max-width: 260px;
+    padding: 5px;
+    font-family: myriad-pro,sans-serif;
+    font-weight: 400;
+    border-radius: 10px;
+    position: relative;
+    left: 10px;
+    top: -5px;
+}
+
+.log_{
+    float: left;
+    width: 420px;
+    height: 60px;
+    line-height: 0px;
+}
+
+.progress{
+
+
+}
+
+.log_ h1 {
+    font-family: myriad-pro,sans-serif;
+    font-weight: 700;
+    font-style: regular;
+    font-size: 18px;
+    color: #31b573;
+    line-height: 0px;
+    padding-top: 9px;
+}
+
+.log_ p {
+    font-family: myriad-pro,sans-serif;
+    font-weight: 700;
+    font-style: regular;
+    font-size: 18px;
+    color: rgb(255, 255, 255);
+    padding-top: 15px;
+    padding-left: 10px;
+}
+
+.user_content{
+    width: 305px;
+    
+}
+
+.user_c_box{
+    width: 300px;
+    margin-bottom: 20px;
+    background: #fff;
+    box-shadow: 0px 9px #001c6f;
+    border-radius: 15px;
+    padding-left: 10px;
+}
+
+.name_u{
+    font-family: myriad-pro,sans-serif;
+    font-weight: 900;
+    font-style: regular;
+}
+
+.u_points{
+    font-family: myriad-pro,sans-serif;
+    font-weight: 900;
+    font-style: regular;
+    color: #31b573;
+    padding-left: 10px;
+}
+
+
+
+.fiel_enpty{
+    margin-top: 40px;
+}
+
+.fiel_enpty input{
+    background: #fff;
+    box-shadow: 0px 9px #001c6f;
+    border: none;
+    height: 45px;
+    width: 350px;
+    border-radius: 15px;
+    text-align: center;
+}
