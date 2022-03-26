@@ -80,10 +80,8 @@ const random = (mn, mx) => Math.random() * (mx - mn) + mn;
 require('./app/controllers/index')(app);
 require('./view/auth')(app);
 
-http.listen(4000, () => {
+http.listen(process.env.PORT, () => {
 
-    console.log('listening on *:4000');
+    console.log('listening on *:' + process.env.PORT);
 
 });
-
-console.log('Server started, at port: 4000');
